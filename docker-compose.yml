@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  customer-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Points the frontend at your NestJS backend (baked in at build time)
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.yourdomain.com}
+    container_name: deardollar-customer-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
